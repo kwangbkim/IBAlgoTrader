@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------
 author : kwang b kim
-This is a project I whipped up to see if a algo trading idea I came up
+This is a project I whipped up to see if an algo trading idea I came up
 with had any worth (it did not, in fact it had negative worth on my bank
 account).  This is all the code I used to run my strategy.
 
@@ -12,22 +12,24 @@ Backtest
 	- Has some code for backtesting strategies without executing them
 	
 Data
-	- This project uses a SQLite database.  I've included my database so you can see the data model
-	I was running off of.
+	- This project uses a SQLite database.  I've included my database so you 
+	  can see the data model I was running off of.
 
 IB
-	- Most of this code is from the Interactive Brokers API to access their trading platform 
-	and data.
+	- Most of this code is from the Interactive Brokers API to access their 
+	  trading platform and data.
+
 	- Stuff I added
 		- com/ib/client/tws/DataMiner
 			- used to acess IB to get data
 		- com/ib/client/tws/Trader
-			- not complete, but the idea is to add stuff like executing trades, getting pnl etc.
+			- not complete, but the idea is to add stuff like executing 
+			  trades, getting pnl etc.
 		- com/ib/client/util 
 
 Statistics
-	- has some statistical analysis scripts, uses the sqllite database filled from with data
-	from the IB api
+	- has some statistical analysis scripts, uses the sqllite database filled 
+	  from with data from the IB api
 	
 Trading
 	- Runs the strategy to determine what to trade
@@ -35,8 +37,7 @@ Trading
 
 ----------------------------------------------------------------------
 Set up:
-You need an account over at IB to make all this stuff work.  See their docs for getting
-all of that set up.
+You need an account over at IB to make all this stuff work.  See their docs for getting it set up.
 
 Run MathHelper/build.xml 
 	- creates MathHelper/lib/mather.jra
