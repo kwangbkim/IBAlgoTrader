@@ -1,0 +1,41 @@
+<project name="MathHelper" basedir="." default="make">
+
+	<description>
+		Build and compile the trading framework library into the lib folder.
+	</description>
+
+	<property name="library.name" value="mather"/>
+	<property name="source.dir" value="src"/>
+    <property name="build.dir" value="build"/>        
+	<property name="lib.dir" value="lib"/>
+	
+	<path id="run.classpath">
+		<pathelement location="${lib.dir}/${library.name}.jar"/>
+	</path>
+	
+	<target name="clean">
+		<delete dir="${lib.dir}"/>
+		<mkdir dir="${lib.dir}"/>
+		<mkdir dir="${build.dir}"/>
+	</target>
+	
+	<target name="make" depends="clean">
+		<javac deprecation='on'
+        	source="1.6"
+        	target="1.6"
+        	debug='off'
+        	srcdir="${source.dir}"
+        	destdir="${build.dir}"
+        	includes="**/*.java" 
+			excludes="**/test/*"
+		/>  
+
+        <jar jarfile="${build.dir}/${library.name}.jar" compress="yes">
+            <zipfileset dir="${build.dir}" excludes="*.jar" includes="mather/**/*.class"/>                
+        </jar>
+        
+        <move file="${build.dir}/${library.name}.jar" todir="${lib.dir}"/>
+		<delete dir="${build.dir}"/>
+    </target>
+
+</project>

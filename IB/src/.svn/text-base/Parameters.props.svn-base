@@ -1,0 +1,29 @@
+# used to determine position sizes
+accountValue = 10000
+percentAccount = .10
+
+# the time frame to use for long and short moving averages
+ma.long.timeframe = 10
+ma.short.timeframe = 50
+
+# number of days to go back when calculating change % in moving averages
+ma.long.timegoback = 10
+ma.short.timegoback = 35
+
+# major move thresholds : % change before describing trend as bull/bear.
+ma.long.threshold = .02
+ma.short.threshold = .015
+
+# stop percentage : the price to set stop losses
+stop.open = .03
+stop.existing = .08
+
+# how many days to go back to get recent hi/low when calculating stops for existing positions
+stop.previousDaysExisting = 20
+stop.daysBeforeUseExistingPercentage = 10
+
+# how far a position moves before another one can be placed
+#pm.tradeableThreshold = .02
+
+# correlation threshold before move becomes statistically relevant
+corr.Coefficient = .4

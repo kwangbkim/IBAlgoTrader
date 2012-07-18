@@ -1,0 +1,47 @@
+<project name="Trading" basedir="." default="make">
+
+	<description>
+		Build and compile the trading framework library into the lib folder.
+	</description>
+
+	<property name="library.name" value="trading"/>
+	<property name="source.dir" value="src"/>
+    <property name="build.dir" value="build"/>        
+	<property name="lib.dir" value="lib"/>
+	<property name="sqlitehelper.dir" value="/Users/Kwang/Development/SQLiteHelper/lib"/>
+	<property name="mather.dir" value="/Users/Kwang/Development/MathHelper/lib"/>
+	
+	<path id="run.classpath">
+		<!--pathelement location="${lib.dir}/${library.name}.jar"/-->
+		<fileset dir="${sqlitehelper.dir}/" includes="**/*.jar"/>
+		<fileset dir="${mather.dir}/" includes="**/*.jar"/>
+	</path>
+	
+	<target name="clean">
+		<!--delete dir="${lib.dir}"/>
+		<mkdir dir="${lib.dir}"/-->
+		<mkdir dir="${build.dir}"/>
+	</target>
+	
+	<target name="make" depends="clean">
+
+		<javac deprecation='on'
+        	source="1.6"
+        	target="1.6"
+        	debug='off'
+        	srcdir="${source.dir}"
+        	destdir="${build.dir}"
+			classpathref="run.classpath"
+        	includes="**/*.java" 
+			excludes="**/test/*"
+		/>  
+
+        <jar jarfile="${build.dir}/${library.name}.jar" compress="yes">
+            <zipfileset dir="${build.dir}" includes="trading/**/*.class"/>                
+        </jar>
+        
+        <move file="${build.dir}/${library.name}.jar" todir="${lib.dir}"/>
+		<delete dir="${build.dir}"/>
+    </target>
+
+</project>

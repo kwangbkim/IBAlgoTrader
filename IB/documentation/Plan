@@ -1,0 +1,56 @@
+1.
+strategy : pairs
+trading vehicles : commodity ETFs
+time horizon : days, weeks
+
+2.
+non random price behavior : 
+commodities markets are often moving randomly in relation to each other.  combinations
+of markets may begin to move in tandem as a result of some event.
+
+3. proof
+pairs of securities will have a neutral correlation most of the time.  at other times
+they'll become significantly positively or negatively correlated.
+
+4. trading rules:
+- determine all pairs of securities where correlation is significantly higher 
+than normal
+	- compare 60 day correlation coefficient average to 45 hour 
+	- correlation rules
+		- (-.2) < long term coef < .2
+		- (-.9) > short term < .9
+	
+- trade in clips, pyramid up
+	- 1 clip = 5% of total account value per pair
+	- max position : 5 clips
+	
+- when having position
+	- how do i know when i'm right?
+		- if profit
+			- add another clip
+		- if loss > 4.35% on either side from highest point
+			- close out both positions
+		- recalculate 45 hour correlation
+			- if lower than threshold close out position
+			
+- pay attention to correlation momentum
+	- if it's going the other way perhaps not worth trading.
+		
+- use moving average?
+	- use sma long term?
+	- ema for short term?	
+
+
+5. awkward spots
+	- correlation is good, but trends change direction
+		- if not closed out
+			- leave position until closed out or correlation turns bad
+		- if closed out
+			- see if it turns into a trend
+				- if so then re-enter using trading rules
+	- correlation is good, market turns choppy, but not closed out
+		- stay in, leave original exit point
+	- one's a winner, the other a loser
+		- keep position until closed out
+	- correlation high, correlation strength decreasing
+		- get out if below threshold

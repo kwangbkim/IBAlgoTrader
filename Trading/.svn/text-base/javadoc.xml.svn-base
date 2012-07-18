@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="javadoc">
+    <target name="javadoc">
+        <javadoc access="public" author="true" classpath="../SQLiteHelper/lib/sqlitehelper.jar:/Users/Kwang/Documents/Code/sqlitejdbc-v056.jar" destdir="doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.6" sourcefiles="src/trading/datamodel/FinancialSecurity.java" sourcepath="src" splitindex="true" use="true" version="true"/>
+    </target>
+</project>

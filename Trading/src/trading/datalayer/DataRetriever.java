@@ -1,0 +1,255 @@
+package trading.datalayer;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import trading.datamodel.FinancialSecurity;
+import trading.datamodel.Position;
+import trading.datamodel.OrderSide;
+import trading.datamodel.PriceType;
+import trading.datamodel.PriceTimeFrame;
+import trading.datamodel.Stock;
+
+/**
+ * 
+ * @author Kwang
+ * singleton class used to retrieve and format data for analysis.
+ */
+public class DataRetriever {
+
+	private Connection MyConnection;
+	
+	/**
+	 * Constructor establishes connection to database.  Connection stays open
+	 * until end of program.
+	 * 
+	 * @param fileLocation the location of the sqlite database
+	 */
+	public DataRetriever() 
+	{
+		try 
+		{
+			Class.forName("org.sqlite.JDBC");
+			MyConnection = DriverManager.getConnection("jdbc:sqlite:../Data/Database.sqlite");
+			MyConnection.setAutoCommit(true);
+		} 
+		catch (ClassNotFoundException e) 
+		{
+			System.out.println("could not instantiate sqlite : " + e.getMessage());
+			throw new IllegalStateException("Class.ForName failed.");
+		} 
+		catch (SQLException e) 
+		{
+			System.out.println(e.getLocalizedMessage());
+		}		
+	}
+	
+	/**
+	 * Get the latest price for a specified symbol 
+	 * 
+	 * @param symbolId : id of symbol in Symbol table
+	 * @param pt : the type of price to get
+	 * 
+	 * @return latest price
+	 * @throws SQLException 
+	 */
+	public double getLastPrice(int symbolId, PriceType pt) throws SQLException
+	{
+		StringBuilder sql = new StringBuilder();
+		sql.append("select ");
+		
+		switch (pt) {
+			case CLOSE: sql.append("Close"); break;
+			case HIGH: sql.append("High"); break;
+			case OPEN: sql.append("Open"); break;
+			case LOW: sql.append("Low"); break; }
+		sql.append(" as Price from DailyPrices where SymbolId=? and Date=(select max(date) from DailyPrices);");
+		PreparedStatement ps = MyConnection.prepareStatement(sql.toString());
+					
+		ps.setInt(1, symbolId);
+				
+		ResultSet rs = ps.executeQuery();
+		return rs.getDouble("Price");
+	}
+	
+	/**
+	 * Get the highest or lowest price for a symbol since a given date.
+	 * 
+	 * @param symbolId : id of symbol in Symbol table
+	 * @param tradedate : date to start search
+	 * @param pt : the type of price to retrieve
+	 * @return maximum price 
+	 * @throws SQLException 
+	 */
+	public double getMaxPrice(int symbolId, Date tradedate, PriceType pt) throws SQLException
+	{
+		String ptype = "";
+		String maxormin = "";
+		switch (pt)
+		{
+			case HIGH:
+			 	ptype = "High"; 
+				maxormin = "max";
+				break;
+			case LOW: 
+				ptype = "Low"; 
+				maxormin = "min";
+				break;
+			default: throw new IllegalArgumentException("maxprice needs valid price type");
+		}
+		
+		String s = String.format("select %s(%s) maxprice from DailyPrices where SymbolId=? and Date>?;", maxormin, ptype);
+		PreparedStatement ps = MyConnection.prepareStatement(s);
+		ps.setInt(1, symbolId);
+		ps.setString(2, tradedate.toString());
+		
+		ResultSet rs = ps.executeQuery();
+		return rs.getDouble("maxprice");
+	}
+	
+	/**
+	* Get a list of currently open positions.
+	*
+	* @return sequence of positions
+	* @throws SQLException
+	*/
+	public List<Position> getOpenPositions() throws SQLException
+	{
+		PreparedStatement ps = MyConnection.prepareStatement("select * from OpenPositions;");
+		ResultSet rs = ps.executeQuery();
+		
+		List<Position> result = new ArrayList<Position>();
+		while (rs.next())
+		{
+			Stock s = new Stock(rs.getInt("SymbolId"), rs.getString("Ticker"));
+			OrderSide side = rs.getString("Side").equals("Buy") ? OrderSide.BUY : OrderSide.SELL;
+			
+			Position p = new Position(s, Date.valueOf(rs.getString("Date")), rs.getInt("Quantity"), rs.getDouble("OpenPrice"), side);
+			p.setLastClosePrice(rs.getDouble("LastClosePrice"));
+				
+			result.add(p);
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Get price as on a specific date  
+	 * 
+	 * @param symbolId : id of symbol in Symbol table
+	 * @param pt : the type of price to retrieve
+	 * @param dt : the date to get the price 
+	 * 
+	 * @return the price
+	 * @throws SQLException 
+	 */
+	public double getPriceAsOf(int symbolId, PriceType pt, Date dt) throws SQLException
+	{
+		StringBuilder sql = new StringBuilder();
+		sql.append("select ");
+		
+		switch (pt) {
+			case CLOSE: sql.append("Close"); break;
+			case HIGH: sql.append("High"); break;
+			case OPEN: sql.append("Open"); break;
+			case LOW: sql.append("Low"); break; }
+		sql.append(" as Price from DailyPrices where SymbolId=? and Date=?;");
+		
+		PreparedStatement ps = MyConnection.prepareStatement(sql.toString());
+		ps.setInt(1, symbolId);
+		ps.setString(2, dt.toString());
+		
+		ResultSet rs = ps.executeQuery();
+		return rs.getDouble("Price");
+	}
+	
+	/**
+	* Get a requested number of prices from any of the price tables
+	*
+	* @param endDate the last date in returned price list
+	* @param symbolId id of symbol in Symbol table
+	* @param resultsize the number of results to return
+	* @param pt the the price type (column) to get
+	* @param time the table to get data from
+	* 
+	* @return a sequence of prices of size resultsize
+	* @throws SQLException
+	*/
+	public List<Double> getPrices(Date endDate, int symbolId, int resultsize, PriceTimeFrame time, PriceType pt) throws SQLException
+	{
+		StringBuilder sql = new StringBuilder();
+		sql.append("select ");
+		
+		switch (pt) {
+			case CLOSE: sql.append("Close"); break;
+			case HIGH: sql.append("High"); break;
+			case OPEN: sql.append("Open"); break;
+			case LOW: sql.append("Low"); break; }
+		sql.append(" as Price from ");
+		
+		switch (time) {
+			case DAY: sql.append("DailyPrices"); break;
+			case HOUR: sql.append("HourlyPrices"); break;
+			case FOURHOUR: sql.append("FourHourlyPrices"); break;}
+		sql.append(" where SymbolId=? and Date<? Order by Date desc Limit ?;");
+		
+		PreparedStatement ps = MyConnection.prepareStatement(sql.toString());
+				
+		ps.setInt(1, symbolId);
+		ps.setString(2, endDate.toString());
+		ps.setInt(3, resultsize);
+		
+		ResultSet rs = ps.executeQuery();
+		
+		List<Double> res = new ArrayList<Double>();
+		while (rs.next())
+		{
+			res.add(rs.getDouble("Price"));
+		}
+		Collections.reverse(res);
+		
+		return res;
+	}
+	
+	/**
+	 * Retrieve list of all securities in database
+	 * 
+	 * @return list of instances of FinancialSecurity subclass
+	 * @throws SQLException
+	 */
+	public List<FinancialSecurity> getSecurities() throws SQLException
+	{
+		List<FinancialSecurity> result = new ArrayList<FinancialSecurity>();
+		
+		Statement sql = MyConnection.createStatement();
+		ResultSet rs = sql.executeQuery("select * from AllSecurities;");
+		
+		while(rs.next())
+		{
+			Stock s = new Stock(rs.getInt("Id"), rs.getString("Ticker"));
+			s.setExchange(rs.getString("Exchange"));
+			s.setSecurityType(rs.getString("Type"));
+			result.add(s);
+		}
+		
+		return result;
+	}
+	
+	/**
+	* Retrieve the latest VT Correlation for a specific symbol.
+	* @return double for correlation
+	* @throws SQLException
+	*/
+	public double getVTCorrelation(int symbolId) throws SQLException
+	{
+		String sql = "select Correlation from VTCorrelations where SymbolId=? and Date=(select max(date) from VTCorrelations);";
+		
+		PreparedStatement ps = MyConnection.prepareStatement(sql);
+		ps.setInt(1, symbolId);
+		
+		ResultSet rs = ps.executeQuery();
+		return rs.getDouble("Correlation");
+	}
+}

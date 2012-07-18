@@ -1,0 +1,34 @@
+This strategy calculates the moving average over a certain number of days using
+the daily closing price.  The long term trend is specified from this analysis.  If percent
+change direction of the SMA, over x number of days is strong enough, then the trend
+is labeled as bull or bear.
+
+The moving average is also calculated for the short term, using hourly prices.  The percent
+change is also calculated to determine the trend type.
+
+To enter a position the long term trend must be bull or bear, and not in the middle.  The
+short term trend can be anything except the exact opposite of the long term trend.  That is,
+it cannot be bull when long term is bear.  But, it can be a weak bull (trend types are 
+parameterized).
+
+Once a position is entered a failed trade is closed out when:
+	- the long term trend type changes
+	- get stopped out
+		- initial stop % parameterized
+
+A winning position is closed out when:
+	- long term trend type changes
+	- get stopped out
+		- existing stop % parameterized
+		
+6/1/2011
+The above is still valid and correct, and will be applied to  all subscribed securities.  The problem 
+is that the majority of these ETF's are closely correlated to each other.  Thus, there is a lack of 
+diversification and an increase in risk even when taking positions across multiple tickers.
+
+The new change is to subscribe to an all-world ETF.  This ETF can also be traded on it's own and
+will take the place of trading ETF's that are correlated with each other.  As for the other securities, 
+a rule will be implemented: any national ETF must be not be correlated with the all-world ETF.
+
+For any national ETF
+ 	- correlation over past 10 trading days must be neutral
