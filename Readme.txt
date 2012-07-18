@@ -4,7 +4,7 @@ This is a project I whipped up to see if an algo trading idea I came up
 with had any worth (it did not, in fact it had negative worth on my bank
 account).  This is all the code I used to run my strategy.
 
-For my info check out my site at : kwangbkim.com
+For more info check out my site at : kwangbkim.com
 
 ----------------------------------------------------------------------
 Descriptions
@@ -21,7 +21,7 @@ IB
 
 	- Stuff I added
 		- com/ib/client/tws/DataMiner
-			- used to acess IB to get data
+			- used to access IB to get data
 		- com/ib/client/tws/Trader
 			- not complete, but the idea is to add stuff like executing 
 			  trades, getting pnl etc.
