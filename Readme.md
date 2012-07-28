@@ -9,10 +9,12 @@ account).  This is all the code I used to run my strategy.
 
 For more info check out my site at : kwangbkim.com
 
-Prerequisites
+Prerequisites:
+===========
 You need an account over at IB to make all this stuff work.  See their docs for getting it set up.
 
 Project Descriptions
+===========
 	Backtest
 		- Has some code for backtesting strategies without executing them
 	
