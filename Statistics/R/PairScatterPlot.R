@@ -3,7 +3,7 @@ PairId <- commandArgs(TRUE)
 
 library("RSQLite")
 driver <- dbDriver("SQLite")
-con <- dbConnect(driver, "/Users/Kwang/Documents/workspace/Pairs/src/database/Database.sqlite")
+con <- dbConnect(driver, "/Users/Kwang/Eclipse/IBAlgoTrader/Data/Database.sqlite")
 
 # get pair row
 pairrow <- dbGetQuery(con, paste("select * from CommodityPairs where Id=", PairId))
