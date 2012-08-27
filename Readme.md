@@ -4,8 +4,7 @@ IBAlgoTrader
 Code is released under the MIT License.
 
 This is a project I whipped up to see if an algo trading idea I came up
-with had any worth (it did not, in fact it had negative worth on my bank
-account).  This is all the code I used to run my strategy.
+with had any worth (it did not).  This is all the code I used to run my strategy.  I take no responsibility for any losses incurred should you use any of my code!
 
 For more info check out my site at : kwangbkim.com
 
